@@ -32,19 +32,21 @@ CREATE TABLE IF NOT EXISTS `keranjang` (
   CONSTRAINT `FK_produk` FOREIGN KEY (`id_produk`) REFERENCES `produk` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Dumping data for table artha_kreasi.keranjang: ~0 rows (approximately)
+-- Data exporting was unselected.
 
 -- Dumping structure for table artha_kreasi.pelanggan
 CREATE TABLE IF NOT EXISTS `pelanggan` (
   `id` int NOT NULL AUTO_INCREMENT,
+  `email` varchar(50) NOT NULL,
   `nama_pelanggan` varchar(50) NOT NULL DEFAULT '0',
   `tlp_pelanggan` varchar(15) NOT NULL DEFAULT '0',
   `alamat_pelanggan` varchar(50) NOT NULL DEFAULT '',
-  `password` varchar(50) NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Dumping data for table artha_kreasi.pelanggan: ~0 rows (approximately)
+-- Data exporting was unselected.
 
 -- Dumping structure for table artha_kreasi.pesanan
 CREATE TABLE IF NOT EXISTS `pesanan` (
@@ -59,7 +61,7 @@ CREATE TABLE IF NOT EXISTS `pesanan` (
   CONSTRAINT `FK_pelangganpesanan` FOREIGN KEY (`id_pelanggan`) REFERENCES `pelanggan` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Dumping data for table artha_kreasi.pesanan: ~0 rows (approximately)
+-- Data exporting was unselected.
 
 -- Dumping structure for table artha_kreasi.pesanandetail
 CREATE TABLE IF NOT EXISTS `pesanandetail` (
@@ -74,7 +76,7 @@ CREATE TABLE IF NOT EXISTS `pesanandetail` (
   CONSTRAINT `FKpesanan_detailproduk` FOREIGN KEY (`id_produk`) REFERENCES `produk` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Dumping data for table artha_kreasi.pesanandetail: ~0 rows (approximately)
+-- Data exporting was unselected.
 
 -- Dumping structure for table artha_kreasi.produk
 CREATE TABLE IF NOT EXISTS `produk` (
@@ -84,15 +86,15 @@ CREATE TABLE IF NOT EXISTS `produk` (
   `harga_diskon` int NOT NULL DEFAULT '0',
   `qty_produk` int NOT NULL DEFAULT '0',
   `best_seller` bit(1) NOT NULL DEFAULT b'0',
-  `foto1` varchar(50) NOT NULL DEFAULT '0',
-  `foto2` varchar(50) NOT NULL DEFAULT '0',
-  `foto3` varchar(50) NOT NULL DEFAULT '0',
-  `foto4` varchar(50) NOT NULL DEFAULT '0',
-  `foto5` varchar(50) NOT NULL DEFAULT '0',
+  `foto1` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '0',
+  `foto2` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '0',
+  `foto3` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '0',
+  `foto4` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '0',
+  `foto5` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Dumping data for table artha_kreasi.produk: ~0 rows (approximately)
+-- Data exporting was unselected.
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
