@@ -15,11 +15,11 @@ if ($result->num_rows > 0) {
     echo json_encode([
         'name' => $product['nama_produk'],
         'price' => $product['harga_produk'],
-        'description' => 'lorem ipsup',
-        // 'image1' => $product['image1'],
-        // 'image2' => $product['image2'],
-        // 'image3' => $product['image3'],
-        // 'image4' => $product['image4']
+        'description' => $product['deskripsi'],
+        'image1' => $product['foto1'],
+        'image2' => $product['foto2'],
+        'image3' => $product['foto3'],
+        'image4' => $product['foto4']
     ]);
 } else {
     echo json_encode(['error' => 'Product not found.']);

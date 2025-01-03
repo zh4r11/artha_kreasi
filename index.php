@@ -116,30 +116,47 @@ session_start();
                                     <!--Cart info Start -->
                                     <div class="cart-info d-flex">
                                         <div class="mini-cart-warp">
-                                            <a href="#" class="count-cart"><span>Rp 0</span></a>
+                                            <a href="#" class="count-cart" data-count="0"><span>Rp 0</span></a>
                                             <div class="mini-cart-content">
                                                 <ul>
-                                                    <li class="single-shopping-cart">
-                                                        <div class="shopping-cart-img">
-                                                            <a href="single-product.html"><img alt="" src="assets/images/product-image/mini-cart/2.jpg" /></a>
-                                                            <span class="product-quantity">1x</span>
-                                                        </div>
-                                                        <div class="shopping-cart-title">
-                                                            <h4><a href="single-product.html">Water and Wind...</a></h4>
-                                                            <span>$11.00</span>
-                                                            <div class="shopping-cart-delete">
-                                                                <a href="#"><i class="ion-android-cancel"></i></a>
-                                                            </div>
-                                                        </div>
-                                                    </li>
+                                                    <?php
+                                                        $sql = "SELECT produk.id as produkId, keranjang.id as keranjangId, keranjang.qty as qty, produk.nama_produk as nama, produk.harga_produk as harga FROM keranjang INNER JOIN produk ON keranjang.id_produk = produk.id WHERE id_pelanggan = '".$_SESSION['id']."' ";
+                                                        $result = $conn->query($sql);
+
+
+                                                        if ($result->num_rows > 0) {
+                                                            while($row = $result->fetch_assoc()) {
+                                                                echo '<li class="single-shopping-cart">
+                                                                        <div class="shopping-cart-img">
+                                                                            <a href="single-product.html"><img alt="" src="assets/images/product-image/organic/product-'.$row["produkId"].'.jpg" /></a>
+                                                                            <span class="product-quantity">'.$row["qty"].'x</span>
+                                                                        </div>
+                                                                        <div class="shopping-cart-title">
+                                                                            <h4><a href="single-product.html">'.$row["nama"].'</a></h4>
+                                                                            <span>Rp '.number_format($row["harga"], 0, ',', '.').'</span>
+                                                                            <div class="shopping-cart-item" data-cart-id="'.$row["keranjangId"].'">
+                                                                                <div class="shopping-cart-delete">
+                                                                                    <a href="#" onclick="deleteCartItem('.$row["keranjangId"].')">
+                                                                                        <i class="ion-android-cancel"></i>
+                                                                                    </a>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </li>';
+                                                            }
+                                                        }
+                                                    ?>
                                                 </ul>
                                                 <div class="shopping-cart-total">
-                                                    <h4>Subtotal : <span>$20.00</span></h4>
-                                                    <h4>Shipping : <span>$7.00</span></h4>
-                                                    <h4>Taxes : <span>$0.00</span></h4>
-                                                    <h4 class="shop-total">Total : <span>$27.00</span></h4>
-                                                </div>
-                                                <div class="shopping-cart-btn text-center">
+                                                    <?php
+                                                        $sql = "SELECT SUM(produk.harga_produk * keranjang.qty) as total FROM keranjang INNER JOIN produk ON keranjang.id_produk = produk.id WHERE id_pelanggan = '".$_SESSION['id']."' ";
+                                                        $result = $conn->query($sql);
+                                                        $row = $result->fetch_assoc();
+                                                        echo '<h4>Subtotal : <span>Rp '.number_format($row["total"], 0, ',', '.').'</span></h4>';
+                                                        
+                                                        ?>
+                                                    </div>
+                                                    <div class="shopping-cart-btn text-center">
                                                     <a class="default-btn" href="checkout.html">checkout</a>
                                                 </div>
                                             </div>
@@ -276,11 +293,13 @@ session_start();
 
                             if ($result->num_rows > 0) {
                                 while($row = $result->fetch_assoc()) {
+                                    $image1 = $row["foto1"] ? 'assets/images/product-image/'.$row["foto1"] : 'assets/images/Image-not-found.png';
+                                    $image2 = $row["foto1"] ? 'assets/images/product-image/'.$row["foto2"] : 'assets/images/Image-not-found.png';
                                     echo '<article class="list-product">
                                         <div class="img-block">
                                             <a href="single-product.html" class="thumbnail">
-                                                <img class="first-img" src="assets/images/product-image/organic/product-'.$row["id"].'.jpg" alt="" />
-                                                <img class="second-img" src="assets/images/product-image/organic/product-'.$row["id"].'.jpg" alt="" />
+                                                <img class="first-img" src="'.$image1.'" alt="" />
+                                                <img class="second-img" src="'.$image2.'" alt="" />
                                             </a>
                                             <div class="quick-view">
                                                 <a class="quick_view" href="#" data-link-action="quickview" title="Quick view" data-toggle="modal" data-target="#exampleModal" data-id="'.$row["id"].'">
@@ -301,7 +320,7 @@ session_start();
                                         </div>
                                         <div class="add-to-link">
                                             <ul>
-                                                <li class="cart"><a class="cart-btn" href="#">ADD TO CART </a></li>
+                                                <li class="cart"><a class="cart-btn" href="#" onclick="addToCart('.$row['id'].', 1)">ADD TO CART </a></li>
                                             </ul>
                                         </div>
                                     </article>';
@@ -366,11 +385,13 @@ session_start();
                                 }
 
                                 if($y < 3){
+                                    $image1 = $row["foto1"] ? 'assets/images/product-image/'.$row["foto1"] : 'assets/images/Image-not-found.png';
+                                    $image2 = $row["foto1"] ? 'assets/images/product-image/'.$row["foto2"] : 'assets/images/Image-not-found.png';
                                     echo '<article class="list-product">
                                             <div class="img-block">
                                                 <a href="single-product.html" class="thumbnail">
-                                                    <img class="first-img" src="assets/images/product-image/organic/product-'.$row["id"].'.jpg" alt="" />
-                                                    <img class="second-img" src="assets/images/product-image/organic/product-'.$row["id"].'.jpg" alt="" />
+                                                <img class="first-img" src="'.$image1.'" alt="" />
+                                                <img class="second-img" src="'.$image2.'" alt="" />
                                                 </a>
                                                 <div class="quick-view">
                                                     <a class="quick_view" href="#" data-link-action="quickview" title="Quick view" data-toggle="modal" data-target="#exampleModal" data-id="'.$row["id"].'">
@@ -506,7 +527,7 @@ session_start();
                             <div class="col-md-5 col-sm-12 col-xs-12">
                                 <div class="tab-content quickview-big-img">
                                     <div id="pro-1" class="tab-pane fade show active">
-                                        <img src="assets/images/product-image/organic/product-1.jpg" alt="" />
+                                        <img src="assets/images/Image-not-found.png" alt="" />
                                     </div>
                                     <div id="pro-2" class="tab-pane fade">
                                         <img src="assets/images/product-image/organic/product-9.jpg" alt="" />
@@ -522,7 +543,7 @@ session_start();
                                 <!-- Thumbnail Image End -->
                                 <div class="quickview-wrap mt-15">
                                     <div class="quickview-slide-active owl-carousel nav owl-nav-style owl-nav-style-2" role="tablist">
-                                        <a class="active" data-toggle="tab" href="#pro-1"><img src="assets/images/product-image/organic/product-1.jpg" alt="" /></a>
+                                        <a class="active" data-toggle="tab" href="#pro-1"><img src="assets/images/Image-not-found.png" alt="" /></a>
                                         <a data-toggle="tab" href="#pro-2"><img src="assets/images/product-image/organic/product-1.jpg" alt="" /></a>
                                         <a data-toggle="tab" href="#pro-3"><img src="assets/images/product-image/organic/product-1.jpg" alt="" /></a>
                                         <a data-toggle="tab" href="#pro-4"><img src="assets/images/product-image/organic/product-1.jpg" alt="" /></a>
@@ -541,10 +562,12 @@ session_start();
                                     <p>Ini sepatu, liat kan. Ukurannya 36-45</p>
                                     <div class="pro-details-quality">
                                         <div class="cart-plus-minus">
-                                            <input class="cart-plus-minus-box" type="text" name="qtybutton" value="1" />
+                                            <div class="dec qtybutton">-</div>
+                                                <input class="cart-plus-minus-box" type="text" name="qtybutton" value="1" />
+                                            <div class="inc qtybutton">+</div>
                                         </div>
                                         <div class="pro-details-cart btn-hover">
-                                            <a href="#"> + Add To Cart</a>
+                                        <a href="#" class="add-to-cart-btn" data-product-id=""> + Add To Cart</a>
                                         </div>
                                     </div>
                                 </div>
@@ -667,7 +690,128 @@ session_start();
         <script src="assets/js/main.js"></script>
 
         <script>
+            function addToCart(productId, quantity) {
+                // Check if the user is logged in
+                if (!<?php echo isset($_SESSION['id']) ? 'true' : 'false'; ?>) {
+                    alert('Please login to add items to the cart.');
+                    return;
+                }
+
+                // Send an AJAX request to add the product to the cart
+                $.ajax({
+                    url: 'addToCart.php',
+                    type: 'POST',
+                    data: {
+                        productId: productId,
+                        quantity: quantity
+                    },
+                    success: function(response) {
+                        const data = JSON.parse(response);
+                        if (data.success) {
+                            alert(data.message);
+                            location.reload();
+                        } else {
+                            alert(data.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error adding product to cart:', error);
+                        alert('An error occurred while adding the product to the cart.');
+                    }
+                });
+            }
+
+            function deleteCartItem(cartId) {
+                if (!confirm('Are you sure you want to delete this item?')) {
+                    return;
+                }
+
+                $.ajax({
+                    url: `hapus_keranjang.php?id=${cartId}`,
+                    type: 'GET',
+                    success: function(data) {
+                        if (data.success) {
+                            alert('Item deleted successfully!');
+                            const itemToRemove = document.querySelector(`[data-cart-id="${cartId}"]`);
+                            if (itemToRemove) {
+                                itemToRemove.remove();
+                            }
+                            // updateCartCount();
+                            location.reload();
+                        } else {
+                            alert('Failed to delete item: ' + data.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error deleting item:', error);
+                        alert('An error occurred while deleting the item.');
+                    }
+                });
+            }
+
+            document.addEventListener('DOMContentLoaded', function () {
+                // Select the plus and minus buttons and the input field
+                const minusButton = document.querySelector('.cart-plus-minus .dec.qtybutton');
+                const plusButton = document.querySelector('.cart-plus-minus .inc.qtybutton');
+                const inputField = document.querySelector('.cart-plus-minus-box');
+                const addToCartButton = document.querySelector('.add-to-cart-btn');
+
+                // Add event listeners to the buttons
+                minusButton.addEventListener('click', function () {
+                    let currentValue = parseInt(inputField.value);
+                    if (currentValue > 1) {
+                        inputField.value = currentValue - 1;
+                    }
+                });
+
+                plusButton.addEventListener('click', function () {
+                    let currentValue = parseInt(inputField.value);
+                    inputField.value = currentValue + 1;
+                });
+
+                // Add event listener to the "Add to Cart" button
+                addToCartButton.addEventListener('click', function (e) {
+                    e.preventDefault(); // Prevent the default link behavior
+
+                    // Get the product ID and quantity
+                    const productId = addToCartButton.getAttribute('data-product-id');
+                    const quantity = parseInt(inputField.value);
+
+                    // Check if the user is logged in
+                    if (!<?php echo isset($_SESSION['id']) ? 'true' : 'false'; ?>) {
+                        alert('Please login to add items to the cart.');
+                        return;
+                    }
+                    console.log(productId);
+                    // Send an AJAX request to add the product to the cart
+                    $.ajax({
+                        url: 'addToCart.php', // Replace with your server-side script
+                        type: 'POST',
+                        data: {
+                            productId: productId,
+                            quantity: quantity
+                        },
+                        success: function (response) {
+                            const data = JSON.parse(response);
+                            if (data.success) {
+                                alert(data.message);
+                                location.reload(); // Reload the page to update the cart
+                            } else {
+                                alert(data.message);
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('Error adding product to cart:', error);
+                            alert('An error occurred while adding the product to the cart.');
+                        }
+                    });
+                });
+            });
+
             $(document).ready(function() {
+                // Call the function when the page loads
+                updateCartCount();
+
                 $('.quick_view').on('click', function(e) {
                 e.preventDefault();
                 
@@ -684,20 +828,37 @@ session_start();
                         var product = JSON.parse(response);
                         
                         // Populate the modal with the fetched data
+                        $('#exampleModal .modal-body .data-product-id').val(productId);
                         $('#exampleModal .modal-body h2').text(product.name);
                         $('#exampleModal .modal-body .old-price').text('Rp ' + product.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."));
                         $('#exampleModal .modal-body p').text(product.description);
                         
+                        $image1 = product.image1 ? 'assets/images/product-images/'.product.image1 : 'assets/images/Image-not-found.png';
+                        $image2 = product.image2 ? 'assets/images/product-images/'.product.image2 : 'assets/images/Image-not-found.png';
+                        $image3 = product.image3 ? 'assets/images/product-images/'.product.image3 : 'assets/images/Image-not-found.png';
+                        $image4 = product.image4 ? 'assets/images/product-images/'.product.image4 : 'assets/images/Image-not-found.png';
+
                         // Update product images
-                        // $('#pro-1 img').attr('src', product.image1);
-                        // $('#pro-2 img').attr('src', product.image2);
-                        // $('#pro-3 img').attr('src', product.image3);
-                        // $('#pro-4 img').attr('src', product.image4);
+                        $('#pro-1 img').attr('src', $image1);
+                        $('#pro-2 img').attr('src', $image2);
+                        $('#pro-3 img').attr('src', $image3);
+                        $('#pro-4 img').attr('src', $image4);
                         
                         // Update thumbnail images
-                        // $('#exampleModal .quickview-slide-active a').each(function(index) {
-                        //     $(this).find('img').attr('src', product['image' + (index + 1)]);
-                        // });
+                        $('#exampleModal .quickview-slide-active a').each(function(index) {
+                            if (index == 1){
+                                $(this).find('img').attr('src', $image1);
+                            }else if(index == 2){
+                                $(this).find('img').attr('src', $image2);
+                            }else if(index == 3) {
+                                $(this).find('img').attr('src', $image3);
+                            } else {
+                                $(this).find('img').attr('src', $image4);
+                            }
+                        });
+
+                        // Update the "Add to Cart" button's data-product-id attribute
+                        $('#exampleModal .add-to-cart-btn').attr('data-product-id', productId);
                         
                         // Show the modal
                         $('#exampleModal').modal('show');
@@ -707,6 +868,29 @@ session_start();
                     }
                 });
             });
+
+            function updateCartCount() {
+                // Make an AJAX request to fetch the cart count
+                $.ajax({
+                    url: 'getCartCount.php',
+                    type: 'GET',
+                    success: function(response) {
+                        const data = JSON.parse(response);
+                        const cartCount = data.cartCount || 0; // Default to 0 if no data is returned
+                        const totalAmount = data.totalAmount;
+                        const cartElement = $('.count-cart');
+
+                        // Update the data-count attribute and the displayed value
+                        if (cartElement.length) {
+                            cartElement.attr('data-count', cartCount);
+                            cartElement.find('span').text(`Rp ${totalAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`); // Update the displayed value
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error fetching cart count:', error);
+                    }
+                });
+            }            
         });
         </script>
     </body>

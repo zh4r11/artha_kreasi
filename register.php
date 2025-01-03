@@ -41,6 +41,7 @@
         if ($stmt->execute()) {
             // Registration successful
             $_SESSION['id'] = $stmt->insert_id; // Store user ID in session
+            $_SESSION['name'] = $stmt->name;
             header('Location: index.php'); // Redirect to the dashboard or home page
             exit();
         } else {
